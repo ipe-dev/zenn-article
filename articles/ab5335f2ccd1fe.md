@@ -3,7 +3,7 @@ title: "【Laravel】VerifyCsrfTokenの中身を調べてみた"
 emoji: "📘"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [Laravel]
-published: false
+published: true
 ---
 Laravel内部でCSRFトークンをどのように使っているのかが気になったので、VerifyCsrfTokenの中身を調べてみました。
 # 結論
@@ -71,3 +71,48 @@ public function handle($request, Closure $next)
     throw new TokenMismatchException('CSRF token mismatch.');
 }
 ```
+handleメソッドでは4つの条件のどれかに当てはまれば`tap`関数をreturnします。
+- isReading
+  - メソッドがhead,get,optionであるか
+- runningUnitTests
+  - ユニットテストを実行しているか
+- inExceptArray 
+  - 前述の`$expect`配列に入っている
+- **tokenMatch**
+  - tokenが一致するか
+
+tap関数が受け取るクロージャでは新しいtokenをcookieにセットしています
+次にtokenが一致するかを検証している`tokenMatch`メソッドについてみていきます
+### tokenMatchメソッド
+```php
+protected function tokensMatch($request)
+{
+    $token = $this->getTokenFromRequest($request);
+
+    return is_string($request->session()->token()) &&
+           is_string($token) &&
+           hash_equals($request->session()->token(), $token);
+}
+```
+`getTokenFromRequest`でtokenを取得し、[ hash_equals関数 ](https://www.php.net/manual/ja/function.hash-equals.php)でsessionに保存したtokenとrequestで送られてきたtokenが一致するかを検証しています。
+tokenが一致せずにエラーになる場合は、`$token`の中身と`$request->session()->token()`の中身がどうなっているかを確認するといいと思います。
+次に`getTokenFromRequest`でのtoken取得方法をみていきます。
+#### getTokenFromRequestメソッド
+```php
+protected function getTokenFromRequest($request)
+{
+    $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
+
+    if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
+        try {
+            $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
+        } catch (DecryptException) {
+            $token = '';
+        }
+    }
+
+    return $token;
+}
+```
+ここではrequestに含まれる`_token`というパラメータか、ヘッダに含まれる`X-CSRF-TOKEN`の内容をtokenとして使用しています。
+それでもtokenが取れなければ`X-XSRF-TOKEN`をヘッダから取得して復号化し、tokenとしてセットしています。
