@@ -2,7 +2,7 @@
 title: "【DDD】Eloquentモデルからエンティティへの変換【Laravel】"
 emoji: "🏭"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: [DDD, 設計, Laravel]
+topics: [DDD,ドメイン駆動設計, 設計, Laravel]
 published: true
 ---
 # これは何？
