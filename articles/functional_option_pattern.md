@@ -15,4 +15,20 @@ GoにはFunctional Option Patternという、structを生成するパターン�
 - 呼び出す側はその関数に引数を渡してパラメータをセットする
 - 必要な時だけ関数を呼び出せばいいので、structにセットするパラメータを可変にできる
 # 具体例
+## 構造体を準備
+以下のような構造体があったとします
+```go:user.go
+    type User struct {
+        Name: string
+        Age: int
+    }
+```
+この構造体を返すような`Newメソッド`を用意します
+```go
+func NewUser(name string, age int) User {
+    return User {
+        Name: name
+    }
+}
+```
 # まとめ
