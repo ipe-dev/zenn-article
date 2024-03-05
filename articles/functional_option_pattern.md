@@ -2,7 +2,7 @@
 title: "【Go】Functional Option Patternによる実装"
 emoji: "👌"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: [Go]
+topics: [Golang]
 published: false
 ---
 # これは何
@@ -16,8 +16,8 @@ GoにはFunctional Option Patternという、structを生成するパターン�
 - 必要な時だけ関数を呼び出せばいいので、structにセットするパラメータを可変にできる
 # 具体例
 ## 元になる構造体
-以下のような構造体があったとします
-この構造体を返すような`Newメソッド`を用意します
+以下のような構造体があったとします。
+この構造体を返すような`Newメソッド`を用意します。
 ```go:user.go
 type User struct {
     name: string
@@ -33,7 +33,7 @@ func New(name string, age int) *User {
 ```
 ## 特定のパラメータをオプションで渡す
 このUserに対して、ペットを飼っている人だけペットの名前を渡したいとします。
-```go
+```go:user.go
 type User struct {
 	name string
 	age int
@@ -45,5 +45,13 @@ type User struct {
 そんな時に使うのが`Functional Option Pattern`です。
 ## Functional Option Pattern
 ### パラメータをセットできる関数を作る
+```go:user.go
+func WithPetName(petName string) func(*User) {
+	return func(u *User) {
+		u.petName = petName 
+	}
+}
+```
+引数に`*User`を取り、パラメータをセットする関数を返しています。
 
 # まとめ
