@@ -1,5 +1,5 @@
 ---
-title: "【Go】Functional Option Patternによる実装"
+title: "【Go】Functional Option Patternで引数を可変にしてみた"
 emoji: "👌"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [Golang]
@@ -16,8 +16,7 @@ GoにはFunctional Option Patternという、structを生成するパターン�
 - 必要な時だけ関数を呼び出せばいいので、structにセットするパラメータを可変にできる
 # 具体例
 ## 元になる構造体
-以下のような構造体があったとします。
-この構造体を返すような`Newメソッド`を用意します。
+以下のような構造体と構造体を返す`New`を用意します。
 ```go:user.go
 type User struct {
     name: string
@@ -31,7 +30,6 @@ func New(name string, age int) *User {
 	}
 }
 ```
-## 特定のパラメータをオプションで渡す
 このUserに対して、ペットを飼っている人だけペットの名前を渡したいとします。
 ```go:user.go
 type User struct {
@@ -52,6 +50,44 @@ func WithPetName(petName string) func(*User) {
 	}
 }
 ```
-引数に`*User`を取り、パラメータをセットする関数を返しています。
+引数に`*User`を取り、パラメータをセットする無名関数を返しています。
+これにより、`WithPetName`実行時にUserにPetNameがセットされます。
+### New関数の引数に可変のoptionを追加する
+```go:user.go
+type User struct {
+	name string
+	age int
+	petName string
+}
 
+type Option func(*User)
+
+func New(name string, age int, options ...Option) *User {
+	user := &User{
+		name: name,
+		age: age,
+	}
+	for _, option := range options {
+		option(user) // ここでoptionで指定した値をuserにセット
+	}
+	return user
+}
+```
+上記のように`Option型`を用意し、Newの引数として可変で渡します。
+Newの中で`option`を実行し、userに値をセットしていきます。
+次にこのNewを呼び出します。
+```go:main.go
+func main() {
+	user := user.New("taro", 20, user.WithPetName("tom"))
+	fmt.Println(*user) // {taro 20 tom}
+}
+```
+Newの最後に`WithPetName`をつけることでペットの名前をセットできました。
+もちろん、PetNameが不要な場合は渡さないことも可能です。
+```go:main.go
+func main() {
+	user := user.New("jiro", 19)
+	fmt.Println(*user) // {jiro 19}
+}
+```
 # まとめ
