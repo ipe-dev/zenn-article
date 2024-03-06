@@ -3,7 +3,7 @@ title: "【Go】Functional Option Patternで引数を可変にしてみた"
 emoji: "👌"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [Golang]
-published: false
+published: true
 ---
 # これは何
 GoにはFunctional Option Patternという、structを生成するパターンがあります。
@@ -90,4 +90,6 @@ func main() {
 	fmt.Println(*user) // {jiro 19}
 }
 ```
-# まとめ
+今回はPetNameのみを追加しましたが、同じ要領で`WithHoge`という関数を複数用意して自由に値をセットできます。
+# 最後に
+少しでも参考になれば幸いです！
