@@ -1,9 +1,9 @@
 ---
-title: "【Go】Builderパターンで実装してみた"
+title: "【Go】Builder Patternで実装してみた"
 emoji: "👷🏼"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [Golang]
-published: false
+published: true
 ---
 # これは何
 [ 前回の記事 ](https://zenn.dev/ippe1/articles/functional_option_pattern)ではGoのFunctional Option Patternについて書きました。
@@ -61,4 +61,30 @@ func (up *UserParam) Weight(weight int) *UserParam {
 	return up
 }
 ```
+## Buildメソッド
+最後に`UserParam`自身を`User`にセットするBuildメソッド実装します。
+```go:user.go
+func (up *UserParam) Build() *User {
+	user := &User{
+		param: *up,
+	}
+
+	return user
+}
+```
+## Builderを呼び出してUserを生成
+実際にBuilderを使ってみます。
+以下のようにメソッドチェーンで繋ぐことによってパラメータを設定していきます。
+```go:main.go
+func main() {
+	builder := NewBuilder("taro", 19). // nameとageは必須で入れる
+		PetName("pochi"). // petName,height,weightはオプションなのでBuilderを使う
+		Height(170).
+		Weight(70)
+	user := builder.Build() // BuildするとUserが生成される
+	fmt.Println(user) // &{{taro 19 pochi 170 70}}
+}
+```
 # 最後に
+以上です！
+少しでも参考になれば幸いです。
