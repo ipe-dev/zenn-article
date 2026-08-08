@@ -1,0 +1,22 @@
+{
+  "files.exclude": {
+    "node_modules": true
+  },
+  "search.exclude": {
+    "node_modules": true,
+    "package-lock.json": true
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.wordSegmenterLocales": "ja",
+    "editor.quickSuggestions": {
+      "other": false,
+      "comments": false,
+      "strings": false
+    },
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.tabSize": 2
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": false
+}
