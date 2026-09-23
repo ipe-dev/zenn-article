@@ -3,7 +3,7 @@ title: "B+ツリーが速いのはディスクのI/O単位に形を合わせた�
 emoji: "🌳"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["PostgreSQL", "DB", "index"]
-published: false
+published: true
 ---
 
 ## はじめに
